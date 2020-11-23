@@ -1,13 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Route } from 'react-router-dom';
+import ProductList from './ProductList';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+<BrowserRouter>
+<div>
+  <Route exact path="/" component={ProductList}/>
+ 
+</div>
+</BrowserRouter>,
   document.getElementById('root')
 );
 
