@@ -2,28 +2,19 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import './styles.css';
-import { Dropdown } from 'semantic-ui-react'
+import { Button, Popup, Grid } from 'semantic-ui-react'
 
-const imageOptions = [
-    {
-      key: '1',
-      text: '',
-      value: 'https://i.ibb.co/6n8BhQw/001-apple.png',
-      image: { avatar: true, src: 'https://i.ibb.co/6n8BhQw/001-apple.png'},
-    },
-    {
-      key: '2',
-      text: '',
-      value: 'https://i.ibb.co/nCC6cGG/010-broccoli.png',
-      image: { avatar: true, src: 'https://i.ibb.co/nCC6cGG/010-broccoli.png' },
-    },
-  ]
+const products = [
+    { value: 'https://i.ibb.co/6n8BhQw/001-apple.png'},
+    { value: 'https://i.ibb.co/nCC6cGG/010-broccoli.png'},
+  ];
+
 
 class ProductList extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { productList: [] , show: true, pictureOfProduct: '', 
+        this.state = { productList: [] , show: true, pictureOfProduct: 'https://i.ibb.co/6n8BhQw/001-apple.png', 
         nameOfProduct: 'Nazwa produktu', 
         amountOfProduct: 0, 
         minValueOfProduct: 0,};
@@ -64,7 +55,7 @@ class ProductList extends React.Component {
 
 
     addProduct = () => {
-        alert('Dodano produkt');
+        alert('Dodano produkt'+ this.state.pictureOfProduct + ' ' + this.state.nameOfProduct + ' ' + this.state.amountOfProduct + ' ' + this.state.minValueOfProduct);
         //Here we will be implementing adding a product
     }
 
@@ -91,6 +82,18 @@ class ProductList extends React.Component {
     }
 
 
+    renderPicture = (image) => {
+        console.log(image)
+        return <img src={image} alt="product" className="imageOfProductList"/>
+    }
+
+
+    changeStatePicture = (option) => {
+        this.setState({
+            pictureOfProduct: option
+        })
+    }
+
 
     render() {
         return(
@@ -103,11 +106,16 @@ class ProductList extends React.Component {
                        this.state.show? <div><button onClick={this.showForms}>Dodaj produkt</button></div> : <div>
                             <table>
                                 <td>
-                                <Dropdown
-                                inline
-                                options={imageOptions}
-                                defaultValue={imageOptions[0].value}
-                                />
+                <Popup trigger={<Button>{this.renderPicture(this.state.pictureOfProduct)}</Button>}flowing hoverable>
+                                    <Grid centered divided columns={2}>
+      <Grid.Column textAlign='center'>
+                <Button onClick={() => {this.changeStatePicture(products[0].value)}}>{this.renderPicture(products[0].value)}</Button>
+      </Grid.Column>
+      <Grid.Column textAlign='center'>
+        <Button onClick={() => {this.changeStatePicture(products[1].value)}}>{this.renderPicture(products[1].value)}</Button>
+      </Grid.Column>
+    </Grid>
+                                    </Popup>    
                                 </td>
                                 <td>
                                     <form>
