@@ -2,13 +2,13 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import './styles.css';
-import { Button, Popup, Grid } from 'semantic-ui-react'
+import { Button, Popup, Grid } from 'semantic-ui-react';
+
 
 const products = [
     { value: 'https://i.ibb.co/6n8BhQw/001-apple.png'},
     { value: 'https://i.ibb.co/nCC6cGG/010-broccoli.png'},
   ];
-
 
 class ProductList extends React.Component {
 
@@ -17,14 +17,15 @@ class ProductList extends React.Component {
         this.state = { productList: [] , show: true, pictureOfProduct: 'https://i.ibb.co/6n8BhQw/001-apple.png', 
         nameOfProduct: 'Nazwa produktu', 
         amountOfProduct: 0, 
-        minValueOfProduct: 0,};
+        minValueOfProduct: 0,
+        didUpdate: false};
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
     handleInputChange(event) {
         const target = event.target;
-        const value = target.value;
         const name = target.name;
+        const value = target.value;
     
         this.setState({
           [name]: value
@@ -33,7 +34,13 @@ class ProductList extends React.Component {
 
 
     componentDidMount() {
-        this.fetchProductList('https://zapasnik.herokuapp.com/products')
+        this.fetchProductList('https://cors-anywhere.herokuapp.com/https://zapasnik.herokuapp.com/products')
+    }
+
+    componentDidUpdate(){
+        if(this.state.didUpdate === true){
+            window.location.reload();
+        }
     }
 
     fetchProductList = (url) => {
@@ -48,15 +55,33 @@ class ProductList extends React.Component {
     }
 
     showForms = () => {
+        
         this.setState({
             show:!this.state.show
         })
     }
 
+ 
+
+
 
     addProduct = () => {
-        alert('Dodano produkt'+ this.state.pictureOfProduct + ' ' + this.state.nameOfProduct + ' ' + this.state.amountOfProduct + ' ' + this.state.minValueOfProduct);
-        //Here we will be implementing adding a product
+        fetch("https://cors-anywhere.herokuapp.com/https://zapasnik.herokuapp.com/products", {method: "POST", body: JSON.stringify({
+            productName: this.state.nameOfProduct,
+            amount: this.state.amountOfProduct,
+            minAccValue: this.state.minValueOfProduct,
+            pictureNumber: this.state.pictureOfProduct}),
+            headers: {'Content-Type': 'application/json; charset=utf-8'}
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw Error(response.statusText);
+        } else {
+        this.setState({didUpdate: true});
+        return response.json()};
+    })
+    .then(data => console.log(data))
+    .catch(error => console.log(error));
     }
 
     renderHead = () => {
@@ -106,16 +131,16 @@ class ProductList extends React.Component {
                        this.state.show? <div><button onClick={this.showForms}>Dodaj produkt</button></div> : <div>
                             <table>
                                 <td>
-                <Popup trigger={<Button>{this.renderPicture(this.state.pictureOfProduct)}</Button>}flowing hoverable>
+                                <Popup trigger={<Button>{this.renderPicture(this.state.pictureOfProduct)}</Button>}flowing hoverable>
                                     <Grid centered divided columns={2}>
-      <Grid.Column textAlign='center'>
-                <Button onClick={() => {this.changeStatePicture(products[0].value)}}>{this.renderPicture(products[0].value)}</Button>
-      </Grid.Column>
-      <Grid.Column textAlign='center'>
-        <Button onClick={() => {this.changeStatePicture(products[1].value)}}>{this.renderPicture(products[1].value)}</Button>
-      </Grid.Column>
-    </Grid>
-                                    </Popup>    
+                                        <Grid.Column textAlign='center'>
+                                            <Button onClick={() => {this.changeStatePicture(products[0].value)}}>{this.renderPicture(products[0].value)}</Button>
+                                        </Grid.Column>
+                                        <Grid.Column textAlign='center'>
+                                            <Button onClick={() => {this.changeStatePicture(products[1].value)}}>{this.renderPicture(products[1].value)}</Button>
+                                        </Grid.Column>
+                                    </Grid>
+                                </Popup>    
                                 </td>
                                 <td>
                                     <form>
@@ -153,5 +178,6 @@ class ProductList extends React.Component {
 
 
 }
+
 
 export default withRouter(ProductList);

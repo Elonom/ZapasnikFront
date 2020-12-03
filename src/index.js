@@ -6,6 +6,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import ProductList from './ProductList';
 import 'semantic-ui-css/semantic.min.css'
 
+
 ReactDOM.render(
 <BrowserRouter>
 <div>
